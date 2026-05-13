@@ -1,10 +1,11 @@
-﻿using System;
-using System.Windows;
-using Microsoft.Win32;
-
-using ImageConverterApp.Models;
+﻿using ImageConverterApp.Models;
 using ImageConverterApp.Services;
-
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.Win32;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows;
 using Forms = System.Windows.Forms;
 
 namespace ImageConverterApp
@@ -21,13 +22,16 @@ namespace ImageConverterApp
 
         private void BrowseFile_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
-
-            dialog.Filter = "Image Files|*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.tiff;*.webp;*.jfif;*.heic";
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "All Supported Files|*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.tiff;*.webp;*.jfif;*.heic;*.mp4"
+            };
 
             if (dialog.ShowDialog() == true)
             {
                 InputFileTextBox.Text = dialog.FileName;
+
+                AutoSelectSourceFormat(dialog.FileName);
             }
         }
 
@@ -41,7 +45,7 @@ namespace ImageConverterApp
             }
         }
 
-        private void ConvertButton_Click(object sender, RoutedEventArgs e)
+        private async void ConvertButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -69,16 +73,14 @@ namespace ImageConverterApp
                 ImageFormatInfo targetFormat =
                     (ImageFormatInfo)TargetFormatComboBox.SelectedItem;
 
-                ImageConverterService.ConvertImage(
-                    inputFile,
-                    destinationFolder,
-                    targetFormat.Extension);
+                await Task.Run(() =>
+                {
+                        ImageConverterService.ConvertImage(
+                        inputFile,
+                        destinationFolder,
+                        targetFormat.Extension);
+                });
 
-                System.Windows.MessageBox.Show(
-                    "Image converted successfully!",
-                    "Success",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -87,6 +89,37 @@ namespace ImageConverterApp
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
+            }
+        }
+
+        private void AutoSelectSourceFormat(string filePath)
+        {
+            string ext = Path.GetExtension(filePath).ToLower();
+
+            foreach (var item in CurrentFormatComboBox.Items)
+            {
+                if (item is ImageConverterApp.Models.ImageFormatInfo format)
+                {
+                    if (format.Extension.ToLower() == ext)
+                    {
+                        CurrentFormatComboBox.SelectedItem = format;
+                        return;
+                    }
+                }
+            }
+
+            // fallback if not found
+            CurrentFormatComboBox.SelectedIndex = -1;
+        }
+
+        private void AutoSelectDefaultTarget(string inputPath)
+        {
+            string ext = Path.GetExtension(inputPath).ToLower();
+
+            if (ext == ".mp4")
+            {
+                TargetFormatComboBox.SelectedItem =
+                    FormatRegistry.SupportedFormats.FirstOrDefault(f => f.Extension == ".gif");
             }
         }
     }

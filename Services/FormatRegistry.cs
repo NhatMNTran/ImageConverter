@@ -15,7 +15,8 @@ namespace ImageConverterApp.Services
             new ImageFormatInfo("TIFF", ".tiff"),
             new ImageFormatInfo("WEBP", ".webp"),
             new ImageFormatInfo("JFIF", ".jfif"),
-            new ImageFormatInfo("HEIC", ".heic")
+            new ImageFormatInfo("HEIC", ".heic"),
+            new ImageFormatInfo("MP4 (Video)", ".mp4")
         };
     }
 }
