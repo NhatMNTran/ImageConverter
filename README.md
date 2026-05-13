@@ -1,5 +1,7 @@
 # ImageConverter
 
+<img width="600" src="https://https://github.com/NhatMNTran/ImageConverter/blob/master/AppScreen.png" alt="Image Converter Icon">
+
 Simple Image Converter is a tool that allows you to convert images from one format to another.
 It supports a wide range of image formats, including JPEG, PNG, GIF, BMP, and more. 
 The tool is easy to use and provides a user-friendly interface for selecting the input and output formats.
@@ -47,10 +49,17 @@ dotnet run
 
 
 P.S.: For Windows Users, to create a .exe file so you would not need to initiate prompts every time, you can publish the application as a self-contained executable:
+
 Step 1 — Open Terminal in Project Folder
+
 In your project directory (where .csproj is):
+
 	"cd YourProjectFolder"
+
 Step 2 — Run Publish Command
+
 	"dotnet publish -c Release -r win-x64 --self-contained true"
+
 Step 3 — Find your .exe in the publish folder:
+
 	"bin\Release\net8.0\win-x64\publish\YourAppName.exe"
