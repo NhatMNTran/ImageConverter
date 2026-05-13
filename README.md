@@ -1,6 +1,6 @@
 # ImageConverter
 
-<img width="600" src="https://https://github.com/NhatMNTran/ImageConverter/blob/master/AppScreen.png" alt="Image Converter Icon">
+<img width="600" src="https://github.com/NhatMNTran/ImageConverter/blob/master/AppScreen.png" alt="Image Converter Icon">
 
 Simple Image Converter is a tool that allows you to convert images from one format to another.
 It supports a wide range of image formats, including JPEG, PNG, GIF, BMP, and more. 
