@@ -3,6 +3,7 @@ using ImageConverterApp.Models;
 
 namespace ImageConverterApp.Services
 {
+    //Simple list of format supported by the app, add new formats here when expanding the app.
     public static class FormatRegistry
     {
         public static List<ImageFormatInfo> SupportedFormats = new()

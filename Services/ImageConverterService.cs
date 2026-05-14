@@ -125,6 +125,7 @@ namespace ImageConverterApp.Services
                 CreateNoWindow = true
             };
 
+            // Start the FFmpeg process and wait for it to complete, then check the exit code to determine if the conversion was successful
             using Process process = Process.Start(startInfo);
             await process.WaitForExitAsync();
 
