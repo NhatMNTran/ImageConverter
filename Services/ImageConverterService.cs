@@ -16,6 +16,7 @@ namespace ImageConverterApp.Services
 {
     public static class ImageConverterService
     {
+        // Async alows methods to be used while the app is perforning other tasks, such as UI interactions, without freezing the interface.
         public static async void ConvertImage(
             string inputPath,
             string outputFolder,
@@ -25,15 +26,10 @@ namespace ImageConverterApp.Services
             string outputPath = Path.Combine(outputFolder, fileName + outputExtension);
             string inputExt = Path.GetExtension(inputPath).ToLower();
 
-            if (inputExt == ".mp4" && outputExtension == ".gif")
+            //If the input and output matches gif and mp4, use ffmpeg and its seperate functions for conversion instead
+            if (inputExt == ".mp4" && outputExtension == ".gif" || inputExt == ".gif" && outputExtension == ".mp4")
             {
                 await ImageConverterService.ConvertMp4ToGif(inputPath, outputPath);
-                return;
-            }
-
-            if (inputExt == ".gif" && outputExtension == ".mp4")
-            {
-                await ImageConverterService.ConvertGifToMp4(inputPath, outputPath);
                 return;
             }
 
@@ -53,8 +49,10 @@ namespace ImageConverterApp.Services
                 return;
             }
 
+            // Utilize SixLabors's ImageSharp for other formats, as it is more efficient and supports a wide range of formats
             using SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(inputPath);
 
+            //Implement switch case encoders for each file types
             switch (outputExtension.ToLower())
             {
                 case ".png":
@@ -90,14 +88,33 @@ namespace ImageConverterApp.Services
         public static async Task ConvertMp4ToGif(string inputPath, string outputPath)
         {
             string ffmpegPath = "ffmpeg";
-            // or full path: C:\\ffmpeg\\bin\\ffmpeg.exe
+            // or full path: C:\\ffmpeg\\bin\\ffmpeg.exe if ffmpeg is not in the system PATH
+            string args = string.Empty;
 
-            string args =
+            // Use different FFmpeg arguments based on whether the input is a video or a GIF
+            if (Path.GetExtension(inputPath).ToLower() == ".mp4")
+            {
+                //  IMPORTANT
+                // Changes FPS and Scale depending on file size preferences,
+                // More FPS and higher scale will result in a larger file size
+                args =
                 $"-i \"{inputPath}\" " +
-                "-vf \"fps=12,scale=480:-1:flags=lanczos\" " +
+                "-vf \"fps=15,scale=480:-1:flags=lanczos\" " +
                 "-y " +
                 $"\"{outputPath}\"";
+            }
+            else if (Path.GetExtension(inputPath).ToLower() == ".gif")
+            {
+                args =
+                $"-i \"{inputPath}\" " +
+                "-movflags faststart " +
+                "-pix_fmt yuv420p " +
+                "-vf \"scale=trunc(iw/2)*2:trunc(ih/2)*2\" " +
+                "-y " +
+                $"\"{outputPath}\"";
+            }
 
+            // Configure the process to run FFmpeg with the specified arguments, and redirect output for error handling
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 FileName = ffmpegPath,
@@ -115,39 +132,6 @@ namespace ImageConverterApp.Services
             {
                 string error = process.StandardError.ReadToEnd();
                 throw new Exception("FFmpeg conversion failed: " + error);
-            }
-        }
-
-        public static async Task ConvertGifToMp4(string inputPath, string outputPath)
-        {
-            string ffmpegPath = "ffmpeg";
-            // or full path: C:\\ffmpeg\\bin\\ffmpeg.exe
-
-            string args =
-                $"-i \"{inputPath}\" " +
-                "-movflags faststart " +
-                "-pix_fmt yuv420p " +
-                "-vf \"scale=trunc(iw/2)*2:trunc(ih/2)*2\" " +
-                "-y " +
-                $"\"{outputPath}\"";
-
-            ProcessStartInfo startInfo = new ProcessStartInfo
-            {
-                FileName = ffmpegPath,
-                Arguments = args,
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-
-            using Process process = Process.Start(startInfo);
-            process.WaitForExit();
-
-            if (process.ExitCode != 0)
-            {
-                string error = process.StandardError.ReadToEnd();
-                throw new Exception("GIF to MP4 conversion failed: " + error);
             }
         }
     }

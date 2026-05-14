@@ -18,7 +18,7 @@ I made this tool to help me practice coding in C# and explores packages. (Also w
   - HEIC / JFIF
 
 - Convert media files:
-  - MP4 → GIF
+  - MP4 → GIF (Application need to be close after conversion for GIF file to finish loading)
   - GIF → MP4
 
 - Simple graphical user interface (WPF)
