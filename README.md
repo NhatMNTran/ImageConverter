@@ -6,7 +6,7 @@ Simple Image Converter is a tool that allows you to convert images from one form
 It supports a wide range of image formats, including JPEG, PNG, GIF, BMP, and more. 
 The tool is easy to use and provides a user-friendly interface for selecting the input and output formats.
 
-I made this tool to help me practice coding in C# and explores packages.
+I made this tool to help me practice coding in C# and explores packages. (Also when I download images from the net it comes in .JFIF form so I need a way to convert it lol)
 
 - Convert images between formats:
   - PNG
@@ -25,6 +25,7 @@ I made this tool to help me practice coding in C# and explores packages.
 - File picker with automatic format detection
 - Destination folder selection
 - Extendable architecture for adding new formats easily
+- Coded in Visual Studio
 
 - Technologies Used
 	- C# (.NET 8)
@@ -44,6 +45,7 @@ https://dotnet.microsoft.com/en-us/download
 https://ffmpeg.org/download.html
 
 To run:
+
 dotnet build  
 dotnet run
 
